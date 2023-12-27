@@ -24,8 +24,8 @@ st.markdown("This application is a Streamlit dashboard that can be used ")
 def get_data(month = '', day = ''):
   data = df.copy()
   if month and day:
-        filtered = data[(data["month"] == month) & (data["day"] == day)]
-        return filtered if not filtered.empty else "No Result"
+      filtered = data[(data["month"] == month) & (data["day"] == day)]
+      return filtered if not filtered.empty else "No Result"
   elif month:
       filtered = data[data["month"] == month]
       return filtered if not filtered.empty else "No Result"
@@ -37,7 +37,7 @@ def get_data(month = '', day = ''):
 
 def user_input_features():
   item = st.selectbox("Item",df["article"].unique())
-  month = st.select_slider("Month",["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"])
+  month = st.select_slider("Month",["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], value="Jan")
   day = st.select_slider("Day",["Mon","Tue","Wed","Thu","Fri","Sat","Sun"], value="Mon")
   return month, day, item
 
@@ -51,7 +51,7 @@ def encode_units(x):
   elif x >= 1:
     return 1
 
-if type(data) != type ("No Result"):
+if (type(data) != type ("No Result")):
   item_count = data.groupby(["ticket_number","article"])["Quantity"].sum().reset_index(name = "Count")
   item_count_pivot = item_count.pivot_table(index="ticket_number",columns="article",values="Count",aggfunc="sum").fillna(0)
   item_count_pivot = item_count_pivot.applymap(encode_units)
@@ -73,18 +73,20 @@ def parse_list(x):
     return ", ".join(x)
 
 def return_item_df(item_antecedents):
-  data = rules[['antecedents','consequents']].copy()
-  if not data.empty:
-    data['antecedents'] = data['antecedents'].apply(parse_list)
-    data['consequents'] = data['consequents'].apply(parse_list)
-
-    return list(data.loc[data['antecedents'] == item_antecedents].iloc[0, :])
+  data_filtered = rules[(rules['antecedents'].apply(lambda x: item_antecedents in x))]
+  if not data_filtered.empty:
+    antecedent = parse_list(data_filtered['antecedents'].values[0])
+    consequent = parse_list(data_filtered['consequents'].values[0])
+    return [antecedent, consequent]
   else:
-    return 0
+    return ["No Result", "Yo Ndak Tahu"]
 
-if type(data) != type ("No Result"):
-  st.markdown("Hasil rekomendasi : ")
-  st.success(f"Jika Konsumen membeli {item}, maka konsumen juga akan membeli {return_item_df(item)[1]} secara bersamaan")
+if (type(data) != type ("No Result")):
+  if (return_item_df(item)[1] != "Yo Ndak Tahu"):
+    st.markdown("Hasil rekomendasi : ")
+    st.success(f"Jika Konsumen membeli {item}, maka konsumen juga akan membeli {return_item_df(item)[1]} secara bersamaan")
+  else:
+    st.markdown("Konsumen hanya membeli satu item")
 else:
   st.markdown("Konsumen hanya membeli satu item")
 
