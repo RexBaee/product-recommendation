@@ -1,0 +1,7 @@
+streamlit
+pandas
+numpy
+seaborn
+matplotlib.pyplot
+sklearn
+mlxtend.frequent_patterns
