@@ -1,4 +1,4 @@
-![image](https://github.com/RexBaee/product-recommendation/assets/130348460/5da653ed-5d06-41a8-91f4-b4a979bca631)# Laporan Proyek Machine Learning
+### Laporan Proyek Machine Learning
 
 ### Nama : Moch Reki Hadiyanto
 
