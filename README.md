@@ -1,4 +1,4 @@
-### Laporan Proyek Machine Learning
+# Laporan Proyek Machine Learning
 
 ### Nama : Moch Reki Hadiyanto
 
